@@ -20,6 +20,8 @@
       integrity="sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=="
       crossorigin="anonymous"
     ></script>
+    <!-- SweetAlert js -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <!-- Bootstrap -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js"
@@ -68,9 +70,9 @@
                   <button
                     type="button"
                     class="btn btn-outline-primary btn-sm"
-                    @click="editProductItem"
+                    @click="editProductItem(product)"
                     data-bs-toggle="modal"
-                    data-bs-target="#productModal"
+                    data-bs-target="#editProductModal"
                   >
                     編輯
                   </button>
@@ -79,6 +81,7 @@
                     class="btn btn-outline-danger btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#delProductModal"
+                    @click="deleteProductItem(product.id)"
                   >
                     刪除
                   </button>
@@ -89,7 +92,7 @@
         </table>
       </div>
 
-      <!-- 新增、編輯產品 Modal -->
+      <!-- 新增產品 Modal -->
       <div
         id="productModal"
         ref="productModal"
@@ -122,10 +125,15 @@
                       <input
                         type="text"
                         class="form-control"
-                        placeholder="請輸入圖片連結" v-model="productItem.data.imageUrl"
+                        placeholder="請輸入圖片連結"
+                        v-model="productItem.data.imageUrl"
                       />
                     </div>
-                    <img class="img-fluid" :src="productItem.data.imageUrl" :alt="productItem.data.title" />
+                    <img
+                      class="img-fluid"
+                      :src="productItem.data.imageUrl"
+                      :alt="productItem.data.title"
+                    />
                   </div>
                   <div>
                     <button
@@ -184,7 +192,7 @@
                         min="0"
                         class="form-control"
                         placeholder="請輸入原價"
-                        v-model="productItem.data.origin_price"
+                        v-model.number="productItem.data.origin_price"
                       />
                     </div>
                     <div class="mb-3 col-md-6">
@@ -195,7 +203,7 @@
                         min="0"
                         class="form-control"
                         placeholder="請輸入售價"
-                        v-model="productItem.data.price"
+                        v-model.number="productItem.data.price"
                       />
                     </div>
                   </div>
@@ -251,7 +259,186 @@
               <button
                 type="button"
                 class="btn btn-primary"
+                data-bs-dismiss="modal"
                 @click="addProductItem"
+              >
+                確認
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 編輯產品 Modal -->
+      <div
+        id="editProductModal"
+        ref="editProductModal"
+        class="modal fade"
+        tabindex="-1"
+        aria-labelledby="editProductModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content border-0">
+            <div class="modal-header bg-dark text-white">
+              <h5 id="editProductModalLabel" class="modal-title">
+                <span>編輯產品</span>
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="mb-2">
+                    <div class="mb-3">
+                      <label for="imageUrl" class="form-label"
+                        >輸入圖片網址</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        placeholder="請輸入圖片連結"
+                        v-model="productItemEdit.imageUrl"
+                      />
+                    </div>
+                    <img
+                      class="img-fluid"
+                      :src="productItemEdit.imageUrl"
+                      :alt="productItemEdit.title"
+                    />
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-outline-primary btn-sm d-block w-100"
+                    >
+                      新增圖片
+                    </button>
+                  </div>
+                  <div>
+                    <button class="btn btn-outline-danger btn-sm d-block w-100">
+                      刪除圖片
+                    </button>
+                  </div>
+                </div>
+                <div class="col-sm-8">
+                  <div class="mb-3">
+                    <label for="title" class="form-label">標題</label>
+                    <input
+                      id="title"
+                      type="text"
+                      class="form-control"
+                      placeholder="請輸入標題"
+                      v-model="productItemEdit.title"
+                    />
+                  </div>
+
+                  <div class="row">
+                    <div class="mb-3 col-md-6">
+                      <label for="category" class="form-label">分類</label>
+                      <input
+                        id="category"
+                        type="text"
+                        class="form-control"
+                        placeholder="請輸入分類"
+                        v-model="productItemEdit.category"
+                      />
+                    </div>
+                    <div class="mb-3 col-md-6">
+                      <label for="price" class="form-label">單位</label>
+                      <input
+                        id="unit"
+                        type="text"
+                        class="form-control"
+                        placeholder="請輸入單位"
+                        v-model="productItemEdit.unit"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="mb-3 col-md-6">
+                      <label for="origin_price" class="form-label">原價</label>
+                      <input
+                        id="origin_price"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        placeholder="請輸入原價"
+                        v-model="productItemEdit.origin_price"
+                      />
+                    </div>
+                    <div class="mb-3 col-md-6">
+                      <label for="price" class="form-label">售價</label>
+                      <input
+                        id="price"
+                        type="number"
+                        min="0"
+                        class="form-control"
+                        placeholder="請輸入售價"
+                        v-model="productItemEdit.price"
+                      />
+                    </div>
+                  </div>
+                  <hr />
+
+                  <div class="mb-3">
+                    <label for="description" class="form-label">產品描述</label>
+                    <textarea
+                      id="description"
+                      type="text"
+                      class="form-control"
+                      placeholder="請輸入產品描述"
+                      v-model="productItemEdit.description"
+                    >
+                    </textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="content" class="form-label">說明內容</label>
+                    <textarea
+                      id="description"
+                      type="text"
+                      class="form-control"
+                      placeholder="請輸入說明內容"
+                      v-model="productItemEdit.content"
+                    >
+                    </textarea>
+                  </div>
+                  <div class="mb-3">
+                    <div class="form-check">
+                      <input
+                        id="is_enabled"
+                        class="form-check-input"
+                        type="checkbox"
+                        :true-value="1"
+                        :false-value="0"
+                      />
+                      <label class="form-check-label" for="is_enabled"
+                        >是否啟用</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                data-bs-dismiss="modal"
+              >
+                取消
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                @click="confirmEditProduct(productItemEdit.id,productItemEdit)"
               >
                 確認
               </button>
@@ -297,7 +484,8 @@
               <button
                 type="button"
                 class="btn btn-danger"
-                @click="deleteProductItem"
+                data-bs-dismiss="modal"
+                @click="confirmDeleteProduct"
               >
                 確認刪除
               </button>
@@ -329,9 +517,8 @@
                 imagesUrl: [],
               },
             },
-            productItemEdit: {
-              
-            }
+            productItemEdit: {},
+            productItemDelete: "",
           };
         },
         mounted() {
@@ -354,7 +541,6 @@
                 this.getData();
               })
               .catch(function (error) {
-                // console.log(error.data.message);
                 window.location = "login.html";
               });
           },
@@ -363,21 +549,69 @@
             axios
               .get(`${this.apiUrl}api/${this.apiPath}/admin/products`)
               .then((response) => {
-                // console.log(response);
                 this.products = response.data.products;
-                console.log(this.products);
               })
               .catch(function (error) {
                 alert(error.data.message);
               });
           },
           //編輯產品
-          editProductItem() {
-            console.log("edit");
+          editProductItem(product) {
+            this.productItemEdit = product;
+          },
+          //確認編輯產品
+          confirmEditProduct(id, productItemEdit) {
+            let editData = {
+              data: {
+                title: productItemEdit.title,
+                category: productItemEdit.category,
+                origin_price: productItemEdit.origin_price,
+                price: productItemEdit.price,
+                unit: productItemEdit.unit,
+                description: productItemEdit.description,
+                content: productItemEdit.content,
+                is_enabled: productItemEdit.is_enabled,
+                imageUrl: productItemEdit.imageUrl,
+                imagesUrl: productItemEdit.imagesUrl,
+              },
+            };
+            console.log(editData);
+            axios
+              .put(
+                `https://vue3-course-api.hexschool.io/v2/api/vue_project/admin/product/${id}`,
+                editData
+              )
+              .then(function (response) {
+                swal({
+                  title: response.data.message,
+                  icon: "success",
+                  button: "OK",
+                });
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
           },
           //刪除產品
-          deleteProductItem() {
-            console.log("delete");
+          deleteProductItem(id) {
+            this.productItemDelete = id;
+          },
+          //確認刪除產品
+          confirmDeleteProduct() {
+            let id = this.productItemDelete;
+            axios
+              .delete(`${this.apiUrl}/api/${this.apiPath}/admin/product/${id}`)
+              .then(function (response) {
+                console.log(response);
+                swal({
+                  title: response.data.message,
+                  icon: "success",
+                  button: "OK",
+                });
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
           },
           //新增產品
           addProductItem() {
@@ -386,13 +620,33 @@
                 `${this.apiUrl}api/vue_project/admin/product`,
                 this.productItem
               )
-              .then(function (response) {
-                console.log(response);
+              .then((response) =>{
+                this.productItem.data = {
+                    title: "",
+                    category: "",
+                    origin_price: 0,
+                    price: 0,
+                    unit: "",
+                    description: "",
+                    content: "",
+                    is_enabled: 1,
+                    imageUrl: "",
+                    imagesUrl: [],
+                };
+                swal({
+                  title: response.data.message,
+                  icon: "success",
+                  button: "OK",
+                });
               })
               .catch(function (error) {
                 console.log(error);
               });
           },
+        },
+        updated() {
+          //若有新增、編輯、刪除產品重新取得產品列表
+          this.getData();
         },
       };
       Vue.createApp(app).mount("#app");
