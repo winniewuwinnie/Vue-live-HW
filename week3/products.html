@@ -620,18 +620,18 @@
                 `${this.apiUrl}api/vue_project/admin/product`,
                 this.productItem
               )
-              .then((response) =>{
+              .then((response) => {
                 this.productItem.data = {
-                    title: "",
-                    category: "",
-                    origin_price: 0,
-                    price: 0,
-                    unit: "",
-                    description: "",
-                    content: "",
-                    is_enabled: 1,
-                    imageUrl: "",
-                    imagesUrl: [],
+                  title: "",
+                  category: "",
+                  origin_price: 0,
+                  price: 0,
+                  unit: "",
+                  description: "",
+                  content: "",
+                  is_enabled: 1,
+                  imageUrl: "",
+                  imagesUrl: [],
                 };
                 swal({
                   title: response.data.message,
